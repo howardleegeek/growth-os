@@ -62,6 +62,8 @@ import random
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from grok_playbook_miner import mine_playbooks
+from hypothesis_generator import Bandit
 from results_log import ResultsLog
 from slot import Slot, SURFACES, mutate
 from twitter_simulator import SimulatedPost, prescreen, simulate
@@ -315,9 +317,51 @@ def run_iteration(
 # Main loop
 # --------------------------------------------------------------------------- #
 
-def run_forever(log_path: Path, iterations: int | None = None) -> None:
+def warm_start_bandit(handles: list[str]) -> Bandit | None:
+    """Mine playbooks from master Twitter accounts via Grok, derive
+    Bayesian priors, return a pre-seeded bandit.
+
+    This is the supervised-learning phase that goes before self-play —
+    see playbook/11-grok-as-opponent-study.md.
+    """
+    if not handles:
+        return None
+    print(f"[warm-start] Studying {len(handles)} master accounts via Grok...")
+    report, priors = mine_playbooks(handles)
+    print(f"[warm-start] Consensus patterns: {', '.join(report.consensus_patterns)}")
+    print(f"[warm-start] Priors seeded for {len(priors.priors)} pattern families")
+    return Bandit(posteriors=priors.priors)
+
+
+def run_forever(
+    log_path:        Path,
+    iterations:      int | None          = None,
+    warm_start:      list[str] | None    = None,
+) -> None:
+    """Main loop.
+
+    If `warm_start` is provided (list of master Twitter handles), the
+    loop first runs the Grok playbook miner to derive pattern-family
+    priors from those accounts, then seeds the bandit before self-play
+    begins. This is the supervised phase. After warm-start the evo loop
+    runs normally.
+    """
     log = ResultsLog(log_path)
     provenance = "evo_loop"
+
+    # --- Supervised phase: learn from the masters --------------------- #
+    bandit = warm_start_bandit(warm_start) if warm_start else None
+    if bandit is not None:
+        log.append(
+            action     = "warm_start",
+            target     = f"grok_miner:{len(warm_start)}_accounts",
+            score      = 0.0,
+            result     = "kept",
+            notes      = f"handles={','.join(warm_start)}",
+            provenance = provenance,
+        )
+
+    # --- Self-play phase: evolutionary tree search -------------------- #
     baseline = Slot(account_handle="@oysterecosystem")
     active_branches: list[Branch] = [Branch(slot=baseline, kept_count=1, total_shipped=1, cumulative_lift=0.5)]
     fragility = FragilityTracker()
@@ -335,8 +379,15 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="growth-os evolutionary loop (EvoHarness × Twitter)")
     parser.add_argument("--log", default="./evo.tsv")
     parser.add_argument("--iterations", type=int, default=20)
+    parser.add_argument("--warm-start", nargs="*", default=None,
+                        help="Master Twitter handles to study via Grok before self-play starts. "
+                             "Example: --warm-start memories_ai rerundotio physical_int")
     args = parser.parse_args()
-    run_forever(Path(args.log), iterations=args.iterations)
+    run_forever(
+        Path(args.log),
+        iterations = args.iterations,
+        warm_start = args.warm_start,
+    )
 
 
 if __name__ == "__main__":

@@ -24,11 +24,12 @@ Twitter's ranker is a weighted sum of predicted signal probabilities.
 They open-sourced it in 2023. Nobody else has built a proper optimizer
 against it. `growth-os` is that optimizer.
 
-The system combines three ideas that haven't been combined before:
+The system combines four ideas that haven't been combined before:
 
 1. **Karpathy-style autoresearch** — an autonomous loop that hypothesizes, executes, measures, verifies, and logs, forever
 2. **EvoHarness tree search** — parallel proposers mutate independent slot surfaces; prescreen kills 2/3 of proposals offline; only survivors ship; winning branches merge
 3. **Offline Twitter simulator** — the published weight map as a scoring function, used to run thousands of mutation trials per second at zero API cost
+4. **Grok opponent study** — the AlphaGo supervised-learning phase, applied to distribution: Grok mines the playbooks of master accounts (including their deleted tweets and live engagement) and seeds the evo loop with Bayesian priors from real-world top operators
 
 It ran Oyster Labs from $0 → $4M in revenue with $0 paid acquisition. The loop has been running continuously for 14+ months. I haven't touched it in three.
 
@@ -144,7 +145,15 @@ growth-os/
 ```bash
 git clone https://github.com/howardleegeek/growth-os
 cd growth-os/engine
+
+# Self-play only
 python3 evo_loop.py --iterations 20 --log /tmp/evo.tsv
+
+# Supervised + self-play (AlphaGo-style):
+# First mine playbooks from master accounts via Grok, then run the loop
+python3 evo_loop.py \
+    --iterations 20 --log /tmp/evo.tsv \
+    --warm-start memories_ai rerundotio physical_int
 ```
 
 Output:

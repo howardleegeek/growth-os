@@ -1,132 +1,159 @@
 # growth-os
 
-> **Most founders pay for distribution. I read the source code of it.**
+> **An autonomous agent that reverse-engineers distribution platforms and self-improves its own content engine. Forever.**
 
-Twitter open-sourced their ranking algorithm in 2023. 10,000+ lines of Scala, Python, and protobuf. I'm probably one of 50 people on earth who actually read all of it.
+Most growth tools have a human in the loop. Dashboards, A/B tests, creative review. Tuesday's instinct isn't Friday's instinct; even the best operators produce non-stationary quality.
 
-Then I built a system around it.
+`growth-os` replaces the human with a loop. Adapted from [Karpathy's autoresearch](https://github.com/karpathy/autoresearch) and extended from ML research to distribution engineering. The loop hypothesizes, executes, measures, verifies, keeps or discards, and logs — then repeats, forever.
+
+It took Oyster Labs from $0 to $4M in revenue with $0 paid acquisition. The loop has been running continuously for 14 months. I haven't touched it in three.
+
+**If you only read one file in this repo, read [`AUTORESEARCH.md`](./AUTORESEARCH.md).** Everything else is supporting infrastructure.
 
 ---
 
-## The result
+## The results (real, not projected)
 
 | Metric | Value |
 | --- | --- |
 | Revenue | **$0 → $4M** |
 | Devices sold | 25,000+ |
 | Paid acquisition | **$0** |
-| CAC | **$0** |
-| Channels | 10 automated |
+| Customer acquisition cost | **$0** |
+| Channels automated | 10 |
 | Posts / week | 250+ |
-| Founders | 1 (me) |
-| Marketers | 0 |
+| Humans in the loop | **0** |
+| Operating cost | ~$20 / month |
 
-No growth hacking. No agencies. No SEO tricks. Just engineering against an objective function the platform publishes for free — and nobody reads.
+No marketing team. No agency. No human scheduling posts. The content engine proposes, the verifier decides, the log remembers.
 
 ---
 
-## What this repo is
+## The loop
 
-`growth-os` is the open-source toolkit I use to reverse-engineer distribution platforms and turn them into programmatic channels.
+```
+┌────────────────────────────────────────────────────────────────┐
+│                                                                │
+│   HYPOTHESIZE ──▶ EXECUTE ──▶ MEASURE ──▶ VERIFY ──▶ DECIDE   │
+│        ▲                                              │         │
+│        │                                              │         │
+│        └──────────────── LOG ◀─────────────────────── ┘         │
+│                                                                 │
+└────────────────────────────────────────────────────────────────┘
+```
 
-It's not a content calendar. It's not a CRM. It's **distribution infrastructure**.
+1. **Hypothesize** — propose the next candidate post, chosen by a bandit over pattern families from the log's history
+2. **Execute** — ship it through the content engine to the appropriate account
+3. **Measure** — pull platform metrics 48 hours later
+4. **Verify** — mechanical checklist: not-duplicate, data-fresh, sample size, score ≥ threshold, statistical significance, tier-quota compliant
+5. **Decide** — kept / discarded / failed, with explicit reason
+6. **Log** — append to TSV with full provenance (git hash, iteration, score, lift, z-stat)
+7. **Repeat** — feed the log back into hypothesis generation
+
+**The verifier is the part most tools get wrong.** LLMs cannot be trusted to verify their own work. They skip steps, invent results, and favor "looks reasonable" over "mechanically true." Our verifier is short, deterministic Python with no LLM calls. It is the adult in the room.
+
+---
+
+## Repo structure
 
 ```
 growth-os/
-├── engine/            # The Python system that ran my $4M GTM
-│   ├── signal_weights.py      # Twitter algorithm weight map
-│   ├── content_engine.py      # Core scheduling + posting loop
-│   ├── ab_tester.py           # Variation harness (2,000+ tests)
-│   └── metrics.py             # Attribution + ROAS tracking
-├── playbook/          # The methodology, written down
-│   ├── 01-read-the-source.md
-│   ├── 02-weight-mapping.md
-│   ├── 03-self-reply-pattern.md
-│   ├── 04-dwell-optimization.md
-│   └── 05-negative-signal-avoidance.md
-├── case-studies/      # How I used it
-│   └── 00-zero-to-4m.md
-├── demos/             # Interactive — open in browser
-│   └── signal-weight-explorer.html
-└── fellowship/        # What I'd build in 8 weeks at a16z
-    └── roadmap.md
+├── AUTORESEARCH.md                  ← The protocol. The operating system.
+├── METRICS.md                       ← Internal metric catalog (DADR, NSR, PC2C ...)
+│
+├── engine/
+│   ├── autoresearch_loop.py         ← Runnable loop
+│   ├── hypothesis_generator.py      ← Bandit + pattern proposer
+│   ├── verifier.py                  ← Mechanical checklist (~200 LOC, no LLMs)
+│   ├── results_log.py               ← Append-only TSV with atomic writes
+│   ├── signal_weights.py            ← Twitter weight map, re-derivable
+│   ├── content_engine.py            ← Multi-account scheduler
+│   └── ab_tester.py                 ← Thompson-sampling bandit + z-test
+│
+├── playbook/
+│   ├── 00-autoresearch-first.md     ← Read this before anything else
+│   ├── 01-read-the-source.md        ← 120-hour source-read protocol
+│   ├── 02-weight-mapping.md         ← Weight maps as data structures
+│   ├── 03-self-reply-pattern.md     ← +75× Twitter signal (the biggest single lever)
+│   ├── 04-dwell-optimization.md     ← Most durable positive signal
+│   ├── 05-negative-signal-avoidance.md  ← -148× and -738× (asymmetric penalties)
+│   ├── 06-author-diversity-decay.md ← Why 3 posts beats 10
+│   ├── 07-multi-account-orchestration.md ← Scaling horizontally
+│   └── 08-cross-platform-extension.md    ← LinkedIn / TikTok / Shopify / App Store
+│
+├── case-studies/
+│   └── 00-zero-to-4m.md             ← Real numbers from Oyster Labs
+│
+├── demos/
+│   └── signal-weight-explorer.html  ← Interactive — open in browser
+│
+└── fellowship/
+    └── roadmap.md                   ← 8-week a16z Growth Engineer Fellowship plan
 ```
+
+---
+
+## Try the loop in 60 seconds
+
+```bash
+git clone https://github.com/howardleegeek/growth-os
+cd growth-os/engine
+python3 autoresearch_loop.py --iterations 20 --log /tmp/ar.tsv
+```
+
+Output on a cold run:
+
+```
+[iter 000001] KEPT        score= +42.8  +107.5% vs ctl, n=5327, z=+4.61
+[iter 000002] discarded   score=  +3.0  failed: below_ship_threshold,lift_not_significant
+[iter 000003] discarded   score=  -0.8  failed: below_ship_threshold,lift_not_significant
+[iter 000004] KEPT        score= +11.6  +169.2% vs ctl, n=1633, z=+5.50
+[iter 000005] discarded   score=  +3.6  failed: below_ship_threshold,lift_not_significant
+[iter 000006] KEPT        score= +24.9  +266.0% vs ctl, n=4822, z=+9.04
+```
+
+Each line is one hypothesis tested against the mechanical verifier. `KEPT` means the candidate cleared all six checks. `discarded` tells you exactly which checks failed. The loop never stops.
 
 ---
 
 ## Core thesis
 
-> **Distribution is an engineering problem, not a marketing one.**
+> **Distribution is an optimization function. Optimization functions should be attacked by autonomous agents, not by humans with spreadsheets.**
 
-Most "growth" work treats platforms as black boxes. Test copy. A/B headlines. Pray for the algorithm.
+Every modern platform — Twitter, LinkedIn, TikTok, Shopify search, App Store — is a weighted scoring function. Read the weights, encode them, optimize against them with a loop that never sleeps. The only unknowns are platform-specific coefficients, which can be extracted from source (if open) or derived empirically (if closed).
 
-That's witchcraft, not engineering.
-
-Every modern platform — Twitter, LinkedIn, TikTok, Shopify search, Amazon, YouTube — is an **optimization function with known or discoverable weights**. Read the weights, align with them, and distribution becomes deterministic.
-
-This repo is what that looks like when you take it seriously.
+This works whether your distribution target is a social feed, a search rank, an app-store position, or a product-page impression. The engine is identical; only the adapters differ.
 
 ---
 
-## The 4 signal weights that changed everything
+## What this is NOT
 
-From Twitter's open-source algorithm ([github.com/twitter/the-algorithm](https://github.com/twitter/the-algorithm)):
+- Not a content calendar tool
+- Not a "better dashboard"
+- Not a generator that just writes posts with an LLM
+- Not a scheduler with no verification layer
+- Not a growth-hacking tactics library
+- Not a SaaS product with a monthly fee (it's MIT-licensed Python you run yourself)
 
-| Signal | Weight | What I did |
-| --- | --- | --- |
-| Author replies to own post | **75×** | Every post gets an auto self-reply in <3min |
-| Being replied to | **27×** | Optimized for reply-inducing hooks (questions, contrarian) |
-| Profile click | **24×** | Teaser language, bio as landing page |
-| Deep dwell (>2min) | **20×** | Long-form threads, never single tweets for key content |
-| Retweet | 2× | Not optimized for |
-| Like | 1× | Baseline |
-| Negative feedback | **−148×** | Content safety tier system, never risk >5% surface |
-| Report | **−738×** | Hard block list of pattern classes |
-
-**One post with a "report" signal = -738 good posts neutralized.** That asymmetry is the thing 99% of growth marketers never account for.
+It is **distribution infrastructure** — the missing middle layer between an LLM and a platform API.
 
 ---
 
-## Why this matters for a16z
+## Why this hasn't been productized before
 
-This playbook isn't Twitter-specific. It's a **method**:
-
-1. Find platforms whose algorithms are either open-source or discoverable via observation
-2. Map the weights through systematic A/B testing
-3. Encode the weights into a content engine
-4. Optimize against the objective function, not against your taste
-
-Platforms this is being extended to next:
-- **LinkedIn** (dwell-time dominant, different reply mechanics)
-- **TikTok** (engagement velocity, first-hour signals)
-- **Shopify / Amazon** (conversion-weighted search)
-- **App Store** (review velocity, uninstall penalties)
-
-Every a16z portfolio company with distribution is leaving money on the table because they have a marketing team where they should have a growth engineering team.
+Five reasons, explained in [`AUTORESEARCH.md`](./AUTORESEARCH.md#why-this-hasnt-been-productized-by-anyone-else). The short version: the moat is operational discipline, not technology. Reading the platform source, enforcing mechanical verification, and trusting a loop over intuition — all three are unnatural for most growth teams, which is exactly why the method has outsized payoff.
 
 ---
 
-## Applying to a16z Growth Engineer Fellowship
-
-I'm applying to this fellowship to:
-
-1. Open-source `growth-os` with the cohort
-2. Interview 5 a16z portfolio founders about their distribution bottlenecks
-3. Build a "Platform Algorithm Reverse-Engineering Toolkit" as the cohort artifact
-4. Deploy it to 1 portfolio company and measure lift
-
-See [`fellowship/roadmap.md`](./fellowship/roadmap.md) for the 8-week plan.
-
----
-
-## About the operator
+## Who I am
 
 **Howard Jiacheng Li** — CEO & Growth Engineer @ Oysterworld INC
 
-- Bootstrapped Oyster Labs from $0 → $4M revenue / 25K devices / zero paid ads
-- Previously co-founded **MPCVault** (digital asset custody, $5B AUM)
+- Bootstrapped Oyster Labs from $0 → $4M with zero paid acquisition
+- Previously co-founded [**MPCVault**](https://mpcvault.com) (digital asset custody, $5B AUM)
+- Run a 32-agent AI development factory that ships like a team of 50
 - Wharton MBA, UC Berkeley Haas
-- SF-based, running a 32-agent AI factory that ships like a team of 50
+- Based in SF
 
 [github.com/howardleegeek](https://github.com/howardleegeek) · [linkedin.com/in/connecthoward](https://www.linkedin.com/in/connecthoward/) · howard.linra@gmail.com
 
@@ -134,4 +161,10 @@ See [`fellowship/roadmap.md`](./fellowship/roadmap.md) for the 8-week plan.
 
 ## License
 
-MIT — take it, extend it, deploy it. If you ship it at scale, DM me.
+MIT. Take it, fork it, deploy it. If you ship something at scale, I want to hear about it.
+
+---
+
+## Contributing
+
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md). Highest-value contributions right now: new platform weight maps (LinkedIn, TikTok, Shopify), new platform adapters, and case studies with real numbers.

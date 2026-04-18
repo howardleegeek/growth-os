@@ -8,13 +8,15 @@
 ## The thesis
 
 a16z has a portfolio of ~500 companies. A non-trivial fraction of them have serious
-distribution problems. Most of them have marketing teams where they should have growth
-engineering teams. The difference between those two is exactly what `growth-os`
-encodes.
+distribution problems. Most of them have marketing teams where they should have
+autonomous distribution loops. The difference is exactly what `growth-os` encodes.
 
-The fellowship is the right environment to operationalize this at scale, because I
-get access to portfolio founders who have real distribution problems and who can tell
-me, in 30 minutes, whether the method transfers to their situation or doesn't.
+A "growth engineer" in 2026 isn't a person who runs A/B tests. It's a person who
+deploys autonomous agents that run A/B tests at a cadence and verification-rigor
+no human team can match. The fellowship is the right environment to operationalize
+this at scale: I get access to portfolio founders who have real distribution
+problems, real data, and the ability to tell me in 30 minutes whether the loop
+transfers to their situation or doesn't.
 
 ---
 

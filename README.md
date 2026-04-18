@@ -7,12 +7,10 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
 [![No LLM in verifier](https://img.shields.io/badge/verifier-mechanical-green.svg)](./engine/verifier.py)
-[![Uptime](https://img.shields.io/badge/uptime-14%20months-brightgreen.svg)](./case-studies/00-zero-to-4m.md)
-[![Revenue generated](https://img.shields.io/badge/bootstrapped-%240%20%E2%86%92%20%244M-success.svg)](./case-studies/00-zero-to-4m.md)
-[![Paid acquisition](https://img.shields.io/badge/paid%20acquisition-%240-blue.svg)](./case-studies/00-zero-to-4m.md)
-[![Operating cost](https://img.shields.io/badge/running%20cost-~%2420%2Fmo-lightgrey.svg)](./IMPLEMENTATION.md)
+[![Stdlib-only core](https://img.shields.io/badge/core-stdlib--only-blue.svg)](./engine/)
+[![Status](https://img.shields.io/badge/status-active-brightgreen.svg)](https://github.com/howardleegeek/growth-os/commits/main)
 
-**[Implementation](./IMPLEMENTATION.md)** · **[Protocol](./AUTORESEARCH.md)** · **[Playbook](./playbook/)** · **[Case Studies](./case-studies/)** · **[Demo](./demos/signal-weight-explorer.html)** · **[Production runtime →](https://github.com/howardleegeek/clawmarketing-engine)**
+**[Implementation](./IMPLEMENTATION.md)** · **[Protocol](./AUTORESEARCH.md)** · **[Playbook](./playbook/)** · **[Case Studies](./case-studies/)** · **[Demo](./demos/signal-weight-explorer.html)** · **[Runtime](./clawmarketing/)**
 
 </div>
 
@@ -31,7 +29,7 @@ The system combines four ideas that haven't been combined before:
 3. **Offline Twitter simulator** — the published weight map as a scoring function, used to run thousands of mutation trials per second at zero API cost
 4. **Grok opponent study** — the AlphaGo supervised-learning phase, applied to distribution: Grok mines the playbooks of master accounts (including their deleted tweets and live engagement) and seeds the evo loop with Bayesian priors from real-world top operators
 
-It ran Oyster Labs from $0 → $4M in revenue with $0 paid acquisition. The loop has been running continuously for 14+ months. I haven't touched it in three.
+The system was developed at Oyster Labs as part of a bootstrapped go-to-market. It's open-sourced here for anyone running into the same problem space.
 
 **If you're reading this from a16z:** [`IMPLEMENTATION.md`](./IMPLEMENTATION.md) is the deep dive written specifically for you. Start there.
 
@@ -39,18 +37,16 @@ It ran Oyster Labs from $0 → $4M in revenue with $0 paid acquisition. The loop
 
 ---
 
-## The results (real, not projected)
+## Design goals (what the system was built to achieve)
 
-| Metric | Value |
+| Goal | Design choice |
 | --- | --- |
-| Revenue | **$0 → $4M** |
-| Devices sold | 25,000+ |
-| Paid acquisition | **$0** |
-| Customer acquisition cost | **$0** |
-| Humans in the loop | **0** |
-| Operating cost | ~$20 / month |
-| Median impressions / post | 180 → 4,100 (**+2,178%**) |
-| Continuous uptime | 14+ months |
+| Zero paid acquisition | All distribution through algorithmic optimization, not spend |
+| Low operator overhead | Autonomous loop with mechanical verification — no human review step |
+| Low operating cost | Offline prescreen kills 2/3 of proposals before any API call |
+| Reproducible decisions | Append-only TSV log with full provenance |
+| Safe defaults | Safety-tier quotas prevent asymmetric negative-signal accumulation |
+| Self-improving | Bandit + branch merging means outcomes compound over time |
 
 ---
 
@@ -168,18 +164,12 @@ Every row is a slot mutation tested against the simulator, shipped (in this test
 
 ---
 
-## Production runtime — separate repo
+## Production runtime is in the repo
 
-The actual Python that ships posts is open-sourced as a companion repo:
-
-**[github.com/howardleegeek/clawmarketing-engine](https://github.com/howardleegeek/clawmarketing-engine)**
-
-- ~5,000 LOC of production Python (`engine/`, `publishers/`, `adapters/`)
-- Runs at Oyster Labs in production. Not a demo.
-- `growth-os` (this repo) is the evolutionary layer ON TOP of that runtime
-
-Read `growth-os` for the method. Read `clawmarketing-engine` for the
-runtime.
+The runtime that ships posts lives in [`clawmarketing/`](./clawmarketing/)
+within this repo. ~5,000 LOC of Python (`engine/`, `publishers/`,
+`adapters/`). Read it for the execution layer under the evolutionary
+loop.
 
 ---
 
@@ -191,7 +181,7 @@ Every "growth tool" in 2026 has a human in the loop. Dashboards, A/B tests, crea
 
 `growth-os` replaces the human with an evolutionary loop that never sleeps, never drifts, and produces a complete audit trail. The system optimizes against the function the platform publishes. It compounds over months. It keeps its own log as training data for future iterations.
 
-The moat is operational, not technological. Every component uses ideas that already exist in public. The willingness to read the ranker's source, encode the weight map, enforce mechanical verification, and let a loop run for 14 months — that's the unusual part.
+The moat is operational, not technological. Every component uses ideas that already exist in public. The willingness to read the ranker's source, encode the weight map, enforce mechanical verification, and let a loop run for an extended period — that's the unusual part.
 
 ---
 
@@ -209,11 +199,9 @@ Adapters for other platforms (LinkedIn, Bluesky, TikTok) are in [`playbook/08-cr
 
 ## Maintainer
 
-Maintained by the operator who ran the system at Oyster Labs from $0 → $4M.
+Open-sourced and maintained by an operator who built and used this system during the bootstrap phase of a consumer hardware company.
 
-For questions, issues, or contributions: use [GitHub Issues](https://github.com/howardleegeek/growth-os/issues) or [Discussions](https://github.com/howardleegeek/growth-os/discussions).
-
-For a16z fellowship-related inquiries: see [`IMPLEMENTATION.md`](./IMPLEMENTATION.md) for the full deep-dive and contact flow.
+For questions, issues, or contributions: [GitHub Issues](https://github.com/howardleegeek/growth-os/issues) or [Discussions](https://github.com/howardleegeek/growth-os/discussions).
 
 ---
 

@@ -94,7 +94,7 @@ Three reasons, in ascending order of relevance:
 
 ### I've already done it
 
-The method in this repo isn't speculative. It took my company from $0 to $4M in revenue
+The method in this repo isn't speculative. It took my company from $0 to bootstrap-phase revenue
 with $0 CAC. The engine is live. The metrics are real. Every claim in this repo is
 reproducible from my own production data.
 

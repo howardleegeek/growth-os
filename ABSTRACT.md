@@ -20,9 +20,10 @@ Most growth tools ignored this. I didn't. I read the 10,000 lines,
 extracted the coefficients, encoded them as a scoring function, and
 built an evolutionary loop that optimizes against it autonomously.
 
-The result: Oyster Labs went from $0 → $4M in revenue with $0 paid
-acquisition, one founder, zero marketers. The loop has been running
-continuously for 14+ months. Total operating cost: under $20/month.
+The system was developed and used during the bootstrap phase of a
+consumer hardware company, where "no marketing budget, no marketing
+team" was the starting constraint. Open-sourced here so the method
+is available to anyone in the same situation.
 
 ## Why this is novel
 

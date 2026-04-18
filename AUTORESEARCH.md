@@ -73,7 +73,7 @@ Most growth teams fight the algorithm. An autoresearch loop **aligns** with it.
 6. **LOG** — append to TSV with full provenance. Every decision is traceable.
 7. **REPEAT** — feed the updated posterior back into HYPOTHESIZE.
 
-The loop never stops. Mine has been running for 14+ months.
+The loop is designed to run continuously.
 
 ---
 

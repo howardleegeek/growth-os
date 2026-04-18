@@ -10,7 +10,7 @@ what the bar is.
 
 `growth-os` is an open-source toolkit for **engineering distribution against published
 platform ranking functions**. It encodes the method I used to bootstrap Oyster Labs
-from $0 to $4M in revenue with zero paid acquisition.
+from $0 to bootstrap-phase revenue with zero paid acquisition.
 
 The project has three layers:
 

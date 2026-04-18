@@ -16,7 +16,7 @@ because the method is wrong, but because the engineering under the method
 is harder than it looks.
 
 The specs below are the real ones. They shipped. They produced the
-infrastructure that ran Oyster Labs from $0 → $4M. Published in condensed
+infrastructure that ran Oyster Labs from bootstrap phase. Published in condensed
 form (acceptance criteria only) so you can use them as a checklist when
 you build your own version.
 
@@ -45,7 +45,7 @@ you build your own version.
 | S18 | Analytics agent control | Agent-driven metric monitoring | P1 |
 
 The starred specs (S07, S13) are the ones most directly load-bearing to
-the $4M outcome. Everything else is supporting infrastructure.
+the bootstrap outcome. Everything else is supporting infrastructure.
 
 ---
 

@@ -28,7 +28,7 @@ ideas that have not been combined before:
 
 The system was built because a solo operator with no marketing budget
 had to treat distribution as an engineering problem. It ran the
-originating company from $0 to $4M in revenue with $0 paid acquisition.
+originating company from bootstrap-phase go-to-market.
 The framework itself is what's open-sourced here.
 
 ---
@@ -223,13 +223,13 @@ it by accident while optimizing the `thread` surface.
 **Weeks 19+: scale to 10 accounts.** Added multi-account orchestration
 layer, cross-account coordination signal avoidance, per-brand voice
 isolation. The loop has been running continuously across 10 accounts
-since week 19. 14 months and counting.
+since week 19. continuous operation.
 
 ---
 
 ## What it actually produced
 
-| Metric | Before growth-os | After 14 months of loop |
+| Metric | Before growth-os | After deployment |
 | --- | --- | --- |
 | Revenue | $0 | **$4M** |
 | Devices sold | 0 | **25,000+** |
@@ -266,12 +266,12 @@ Yes, if they wanted to. They don't want to because distribution
 infrastructure isn't their ICP. The moat here isn't technology; it's the
 combination of (a) willingness to read a ranker's source code line-by-line,
 (b) discipline to enforce mechanical verification, and (c) operational
-patience to run a loop for 14 months straight. All three are unusual
+patience to run a loop for an extended period. All three are unusual
 combined; none of them get built by a platform lab as a side project.
 
 **"How do you know it's actually working vs. lucky?"**
 The provenance log. Every iteration is mechanically verified against a
-statistical-significance check. 14 months of logs means ~40,000 verified
+statistical-significance check. extensive logs means ~40,000 verified
 iterations. "Lucky" doesn't survive n=40,000 at p<0.05.
 
 **"What if Twitter changes the algorithm?"**
@@ -291,10 +291,8 @@ the right distribution vehicle for the public good.
 
 ## About the maintainer
 
-Maintained by the operator who ran the system at Oyster Labs from $0 → $4M.
-
-The loop is the same operational discipline applied to a different
-objective function than the one I usually work on (physical AI
-infrastructure). If the repo is useful to you, open an issue or a PR.
+Open-sourced and maintained by an operator who built and used this
+system during the bootstrap phase of a consumer hardware company.
+If the repo is useful to you, open an issue or a PR.
 
 Repo: [github.com/howardleegeek/growth-os](https://github.com/howardleegeek/growth-os)

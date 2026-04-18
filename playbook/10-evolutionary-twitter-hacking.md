@@ -281,7 +281,7 @@ public. EvoHarness is public (runner-up of the 2026 harness arena). The
 simulator is just the weight map applied to predicted signals.
 
 The moat is **the willingness to actually ship the combined system and
-run it for 14 months**. That's operational discipline — specifically:
+run it for an extended period**. That's operational discipline — specifically:
 
 - Surrender intuition to the loop, even when the loop does something you
   wouldn't have done

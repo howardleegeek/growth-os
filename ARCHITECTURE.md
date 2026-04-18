@@ -387,7 +387,7 @@ whether to upstream generic versions.
 | **Total per account / day** | | **~$0.20** |
 
 At 10 accounts running 24/7, total monthly cost is ~$60 of LLM API
-plus ~$5/mo for a VPS. This number has been stable for 14 months.
+plus ~$5/mo for a VPS. This number has been stable for an extended period.
 
 The cost doesn't scale with iteration count — it scales with
 *new content generation*, which is capped by the daily posts-per-account

@@ -4,11 +4,14 @@
 
 ### Implementation of EvoHarness engineering in Twitter algorithm automation
 
+[![tests](https://github.com/howardleegeek/growth-os/actions/workflows/tests.yml/badge.svg)](https://github.com/howardleegeek/growth-os/actions/workflows/tests.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
 [![No LLM in verifier](https://img.shields.io/badge/verifier-mechanical-green.svg)](./engine/verifier.py)
 [![Stdlib-only core](https://img.shields.io/badge/core-stdlib--only-blue.svg)](./engine/)
-[![Status](https://img.shields.io/badge/status-active-brightgreen.svg)](https://github.com/howardleegeek/growth-os/commits/main)
+[![83 tests passing](https://img.shields.io/badge/tests-83%20passing-brightgreen.svg)](./tests/)
+[![Simulator: 3.81μs](https://img.shields.io/badge/simulator-3.81%CE%BCs%2Fcall-blue.svg)](./benchmarks/simulator_speed.py)
+[![Correlation r=0.77](https://img.shields.io/badge/simulator%20correlation-r%3D0.77-green.svg)](./benchmarks/simulator_correlation.py)
 
 **[The Journey](./THE_JOURNEY.md)** · **[Implementation](./IMPLEMENTATION.md)** · **[Protocol](./AUTORESEARCH.md)** · **[Playbook](./playbook/)** · **[Case Studies](./case-studies/)** · **[Demo](./demos/signal-weight-explorer.html)** · **[Runtime](./clawmarketing/)**
 

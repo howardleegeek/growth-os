@@ -1,0 +1,12 @@
+Simulator vs synthetic ground-truth correlation
+================================================
+Posts scored:          1000
+Mean simulator score:    +53.66
+Mean ground-truth:       +35.53
+
+Spearman rank corr:    r = +0.769
+
+Interpretation:
+  r > 0.6  — simulator is useful for prescreening
+  r > 0.8  — simulator closely tracks ground truth
+  r < 0.5  — simulator is worse than random for ranking

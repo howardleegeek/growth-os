@@ -1,0 +1,11 @@
+Twitter simulator speed benchmark
+==================================
+Trials:    100,000
+Mean:          4.30 μs per call
+Median:        3.62 μs per call
+Stdev:        18.45 μs
+p95:           4.54 μs
+p99:           8.33 μs
+
+Simulations per second (mean):      232,778
+Simulations per second (median):    275,862

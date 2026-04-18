@@ -130,5 +130,4 @@ not I'm accepted. The fellowship is the environment that lets me 10× the blast 
 
 ## Contact
 
-Howard Li · CEO & Growth Engineer · Oysterworld INC
-howard.linra@gmail.com · [linkedin.com/in/connecthoward](https://www.linkedin.com/in/connecthoward/) · [github.com/howardleegeek](https://github.com/howardleegeek)
+For fellowship-related questions: [GitHub Issues](https://github.com/howardleegeek/growth-os/issues) or [Discussions](https://github.com/howardleegeek/growth-os/discussions).

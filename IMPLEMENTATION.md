@@ -1,13 +1,13 @@
-# How I implemented growth-os
+# How growth-os was built
 
-> A technical deep-dive for anyone who wants to understand what's actually
-> running under the hood. Written in plain-English narrative form — the
-> kind of doc I wish more open-source projects wrote instead of generic
-> READMEs.
+> A technical deep-dive written in plain-English narrative form. Covers
+> what's actually running under the hood, how the pieces fit together,
+> and the timeline of how the system evolved from a failed v1 into the
+> current evolutionary loop.
 >
-> If you're reading this because you're considering whether to spend 30
-> minutes on a call with me, this document is what the call would cover.
-> Read it first; bring harder questions.
+> Read this if you want to understand the system at engineering depth.
+> Read [`README.md`](./README.md) or [`ABSTRACT.md`](./ABSTRACT.md) first
+> for context.
 
 ---
 
@@ -26,10 +26,10 @@ ideas that have not been combined before:
    ranking weights, encoded as a scoring function, used to run thousands
    of mutation trials per second at zero API cost before anything ships.
 
-I built this because I was running Oyster Labs as a solo founder with no
-marketing budget, and the naive approach (post good content, hope) was not
-viable. It ran Oyster Labs from $0 to $4M revenue with $0 paid acquisition,
-and the framework itself is what I'm open-sourcing.
+The system was built because a solo operator with no marketing budget
+had to treat distribution as an engineering problem. It ran the
+originating company from $0 to $4M in revenue with $0 paid acquisition.
+The framework itself is what's open-sourced here.
 
 ---
 
@@ -250,61 +250,6 @@ Full metrics catalog in [`METRICS.md`](./METRICS.md), full case study in
 
 ---
 
-## What I want to build in the a16z Growth Engineer Fellowship
-
-Three concrete deliverables, eight weeks:
-
-**Weeks 1–2: portfolio intake.** Interview 10 a16z portfolio founders
-about their distribution bottleneck. Classify each problem. Identify the
-top 3 patterns. Public writeup so the cohort benefits.
-
-**Weeks 3–4: `growth-os` v1.0 hardening.** Extract Oyster-specific pieces
-into clean OSS adapters. Publish `growth-os init` CLI. 90%+ test coverage
-on the engine. One-command install from npm and PyPI.
-
-**Weeks 5–6: deploy to 3 portfolio companies.** Customize weight map and
-safety tiers for their platform and audience. Deploy and run for 2 weeks
-with weekly check-ins. Publish 3 case studies with real metrics (with
-the companies' permission).
-
-**Weeks 7–8: PARE toolkit + Cohort Playbook.** Ship the Platform Algorithm
-Reverse-Engineering Toolkit — a Jupyter-notebook template any founder can
-use to build a weight map for any new platform in <40 hours. Ship the
-refined Cohort Playbook, MIT-licensed.
-
-Full roadmap in [`fellowship/roadmap.md`](./fellowship/roadmap.md).
-
----
-
-## What I'd cover in the call
-
-If we get on a 30-minute call, here's the agenda I'd propose:
-
-**Minutes 0–5: your questions on the architecture.**
-The files above are the artifact. What doesn't make sense? What do you
-think won't hold up in production? I'd rather answer the hard questions
-first.
-
-**Minutes 5–15: live demo.**
-I'll open the laptop, start the loop, and let it run while we talk. You
-see the TSV append in real time. You see which mutations get kept, which
-get discarded, and why. You see the simulator prescreen proposals. You
-see the self-reply pattern fire at the 2:47 mark. Real numbers, real
-iterations, no screenshots, no staging.
-
-**Minutes 15–25: portfolio fit.**
-Which portfolio companies have the distribution problems this solves?
-Which ones are most likely to benefit in the 8-week window? I have
-candidate hypotheses based on public info but you know the portfolio
-better.
-
-**Minutes 25–30: next step.**
-If this is interesting, what's the path forward — fellowship application,
-direct introduction to a partner, immediate pilot with one portfolio co?
-Comfortable with any of the three; I'll follow your lead.
-
----
-
 ## What this is NOT
 
 Addressing the objections I expect:
@@ -344,33 +289,12 @@ the right distribution vehicle for the public good.
 
 ---
 
-## The ask
+## About the maintainer
 
-If you're at a16z and you've read this far, here's what I'd like:
+Maintained by the operator who ran the system at Oyster Labs from $0 → $4M.
 
-1. **30 minutes on a call.** Agenda above. I'll bring the laptop and the
-   live loop.
-2. **Fellowship consideration.** Growth Engineer Fellowship, next cohort
-   if applications are closed for the current one.
-3. **A decision one way or the other within 14 days.** I'd rather hear
-   "no" fast than "maybe" slow.
+The loop is the same operational discipline applied to a different
+objective function than the one I usually work on (physical AI
+infrastructure). If the repo is useful to you, open an issue or a PR.
 
-Contact: [howard.linra@gmail.com](mailto:howard.linra@gmail.com) ·
-[linkedin.com/in/connecthoward](https://www.linkedin.com/in/connecthoward/)
-· [github.com/howardleegeek/growth-os](https://github.com/howardleegeek/growth-os)
-
----
-
-## About me (one paragraph)
-
-Howard Jiacheng Li. CEO and growth engineer at Oysterworld INC. Took
-Oyster Labs from $0 to $4M in revenue with $0 paid acquisition, bootstrapped,
-one founder. Previously co-founded MPCVault — digital asset custody,
-$5B AUM. Wharton MBA, UC Berkeley Haas. Based in SF. I spend most of my
-time on physical AI infrastructure and most of the rest on thinking about
-how to do more with less software by letting loops do the work humans
-shouldn't.
-
-The loop I built for distribution is the same operational discipline
-applied to a different objective function. If a16z's portfolio needs
-either one, I'm the right person to talk to.
+Repo: [github.com/howardleegeek/growth-os](https://github.com/howardleegeek/growth-os)

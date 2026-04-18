@@ -199,5 +199,4 @@ specific values in the 2026 Twitter coefficients.
 
 ## End of playbook
 
-Thanks for reading. If you ship something using this approach, I want to know:
-[howard.linra@gmail.com](mailto:howard.linra@gmail.com) · [linkedin.com/in/connecthoward](https://www.linkedin.com/in/connecthoward/)
+Thanks for reading. If you ship something using this approach, open an issue or a PR — we'd like to hear about it.

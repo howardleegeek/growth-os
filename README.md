@@ -2,7 +2,7 @@
 
 # `growth-os`
 
-### Evolutionary tree search that hacks Twitter's ranking algorithm
+### Implementation of EvoHarness engineering in Twitter algorithm automation
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
@@ -18,7 +18,7 @@
 
 ---
 
-> **An evolutionary tree search that hacks Twitter's ranking algorithm. Forever.**
+> **An implementation of EvoHarness engineering applied to Twitter algorithm automation.**
 
 Twitter's ranker is a weighted sum of predicted signal probabilities.
 They open-sourced it in 2023. Nobody else has built a proper optimizer
@@ -183,27 +183,18 @@ Adapters for other platforms (LinkedIn, Bluesky, TikTok) are in [`playbook/08-cr
 
 ---
 
-## Who I am
+## Maintainer
 
-**Howard Jiacheng Li** — CEO & Growth Engineer @ Oysterworld INC
+Maintained by the operator who ran the system at Oyster Labs from $0 → $4M.
 
-- Bootstrapped Oyster Labs from $0 → $4M with zero paid acquisition, zero capital raised
-- Previously co-founded [**MPCVault**](https://mpcvault.com) — digital asset custody, $5B AUM at peak
-- Wharton MBA, UC Berkeley Haas
-- SF-based, running a 32-agent AI development factory that ships like a team of 50
+For questions, issues, or contributions: use [GitHub Issues](https://github.com/howardleegeek/growth-os/issues) or [Discussions](https://github.com/howardleegeek/growth-os/discussions).
 
-[github.com/howardleegeek](https://github.com/howardleegeek) · [linkedin.com/in/connecthoward](https://www.linkedin.com/in/connecthoward/) · howard.linra@gmail.com
+For a16z fellowship-related inquiries: see [`IMPLEMENTATION.md`](./IMPLEMENTATION.md) for the full deep-dive and contact flow.
 
 ---
 
 ## License & Contributing
 
-MIT. Take it, fork it, deploy it. If you ship something meaningful, I want to hear about it.
+MIT. Take it, fork it, deploy it.
 
 Highest-value contributions right now: new platform weight maps (LinkedIn, TikTok, Shopify search), case studies with real numbers, and extensions to the evolutionary loop. See [`CONTRIBUTING.md`](./CONTRIBUTING.md).
-
----
-
-## For a16z — the ask
-
-If you're evaluating for the Growth Engineer Fellowship: read [`IMPLEMENTATION.md`](./IMPLEMENTATION.md), then [`fellowship/roadmap.md`](./fellowship/roadmap.md). I'd like 30 minutes on a call. Agenda is in the implementation doc. Thanks for looking.

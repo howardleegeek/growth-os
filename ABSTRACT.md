@@ -38,19 +38,15 @@ run no tree search.
 
 ## Who should care
 
-- **a16z partners** — I'm applying to the Growth Engineer Fellowship.
-  Full technical deep-dive is in [`IMPLEMENTATION.md`](./IMPLEMENTATION.md).
-  I'd like 30 minutes on a call.
 - **Bootstrapped founders** — this is the playbook for getting to $1M+ in
-  revenue without raising capital and without hiring a growth team.
-  Start with [`playbook/00-autoresearch-first.md`](./playbook/00-autoresearch-first.md).
+  revenue without raising capital and without hiring a growth team. Start
+  with [`playbook/00-autoresearch-first.md`](./playbook/00-autoresearch-first.md).
+- **Growth engineers** — this is what growth work looks like when the
+  objective function is explicit and the loop is autonomous. Start with
+  [`IMPLEMENTATION.md`](./IMPLEMENTATION.md).
 - **ML research engineers** — this is Karpathy's autoresearch + EvoHarness
   applied to a non-ML optimization problem (distribution). If you find the
-  transfer interesting, I'd love to hear from you.
-
-## Contact
-
-[howard.linra@gmail.com](mailto:howard.linra@gmail.com) · [linkedin.com/in/connecthoward](https://www.linkedin.com/in/connecthoward/)
+  transfer interesting, open an issue.
 
 ---
 

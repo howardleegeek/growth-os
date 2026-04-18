@@ -114,7 +114,4 @@ we'll move to a less centralized model.
 
 ## Contact
 
-Issues: GitHub Issues on this repo.
-
-Direct: [howard.linra@gmail.com](mailto:howard.linra@gmail.com) — prefer GitHub Issues
-for anything the community can benefit from seeing.
+Use [GitHub Issues](https://github.com/howardleegeek/growth-os/issues) for bugs, feature requests, or questions. Use [Discussions](https://github.com/howardleegeek/growth-os/discussions) for open-ended conversations.

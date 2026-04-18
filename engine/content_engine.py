@@ -17,7 +17,7 @@ from __future__ import annotations
 import asyncio
 import random
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Literal
 
 from signal_weights import (
@@ -45,7 +45,7 @@ class Candidate:
     thread_continuation: str | None = None   # for the 75× self-reply lever
     hook_type: str = "question"              # question | contrarian | teardown | data
     safety_tier: SafetyTier = "A"
-    generated_at: datetime = field(default_factory=datetime.utcnow)
+    generated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 @dataclass
@@ -176,7 +176,7 @@ async def run_daily_cycle(brands: list[str], platforms: list[Platform]) -> None:
             all_posts.extend(scored)
 
     shipped = gate(all_posts)
-    scheduled = schedule(shipped, start=datetime.utcnow().replace(hour=6, minute=0, second=0))
+    scheduled = schedule(shipped, start=datetime.now(timezone.utc).replace(hour=6, minute=0, second=0))
     await publish(scheduled)
 
     print()

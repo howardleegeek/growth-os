@@ -12,7 +12,7 @@
 [![Paid acquisition](https://img.shields.io/badge/paid%20acquisition-%240-blue.svg)](./case-studies/00-zero-to-4m.md)
 [![Operating cost](https://img.shields.io/badge/running%20cost-~%2420%2Fmo-lightgrey.svg)](./IMPLEMENTATION.md)
 
-**[Implementation](./IMPLEMENTATION.md)** · **[Protocol](./AUTORESEARCH.md)** · **[Playbook](./playbook/)** · **[Case Studies](./case-studies/)** · **[Demo](./demos/signal-weight-explorer.html)**
+**[Implementation](./IMPLEMENTATION.md)** · **[Protocol](./AUTORESEARCH.md)** · **[Playbook](./playbook/)** · **[Case Studies](./case-studies/)** · **[Demo](./demos/signal-weight-explorer.html)** · **[Production runtime →](https://github.com/howardleegeek/clawmarketing-engine)**
 
 </div>
 
@@ -156,6 +156,21 @@ Output:
 ```
 
 Every row is a slot mutation tested against the simulator, shipped (in this test, stubbed), measured, and mechanically verified. `safety` surface fragility stays near 0.9 because the loop correctly refuses to test mutations that could produce asymmetric negative signals.
+
+---
+
+## Production runtime — separate repo
+
+The actual Python that ships posts is open-sourced as a companion repo:
+
+**[github.com/howardleegeek/clawmarketing-engine](https://github.com/howardleegeek/clawmarketing-engine)**
+
+- ~5,000 LOC of production Python (`engine/`, `publishers/`, `adapters/`)
+- Runs at Oyster Labs in production. Not a demo.
+- `growth-os` (this repo) is the evolutionary layer ON TOP of that runtime
+
+Read `growth-os` for the method. Read `clawmarketing-engine` for the
+runtime.
 
 ---
 

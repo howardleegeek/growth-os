@@ -1,14 +1,22 @@
 # growth-os
 
-> **An autonomous agent that reverse-engineers distribution platforms and self-improves its own content engine. Forever.**
+> **An evolutionary tree search that hacks Twitter's ranking algorithm. Forever.**
 
-Most growth tools have a human in the loop. Dashboards, A/B tests, creative review. Tuesday's instinct isn't Friday's instinct; even the best operators produce non-stationary quality.
+Twitter's ranker is a weighted sum of predicted signal probabilities.
+They open-sourced it in 2023. Nobody else has built a proper optimizer
+against it. `growth-os` is that optimizer.
 
-`growth-os` replaces the human with a loop. Adapted from [Karpathy's autoresearch](https://github.com/karpathy/autoresearch) and extended from ML research to distribution engineering. The loop hypothesizes, executes, measures, verifies, keeps or discards, and logs — then repeats, forever.
+The system combines three ideas that haven't been combined before:
 
-It took Oyster Labs from $0 to $4M in revenue with $0 paid acquisition. The loop has been running continuously for 14 months. I haven't touched it in three.
+1. **Karpathy-style autoresearch** — an autonomous loop that hypothesizes, executes, measures, verifies, and logs, forever
+2. **EvoHarness tree search** — parallel proposers mutate independent slot surfaces; prescreen kills 2/3 of proposals offline; only survivors ship; winning branches merge
+3. **Offline Twitter simulator** — the published weight map as a scoring function, used to run thousands of mutation trials per second at zero API cost
 
-**If you only read one file in this repo, read [`AUTORESEARCH.md`](./AUTORESEARCH.md).** Everything else is supporting infrastructure.
+It ran Oyster Labs from $0 → $4M in revenue with $0 paid acquisition. The loop has been running continuously for 14+ months. I haven't touched it in three.
+
+**If you're reading this from a16z:** [`IMPLEMENTATION.md`](./IMPLEMENTATION.md) is the deep dive written specifically for you. Start there.
+
+**If you're a builder who wants to run this:** [`AUTORESEARCH.md`](./AUTORESEARCH.md) explains the protocol, then [`playbook/10-evolutionary-twitter-hacking.md`](./playbook/10-evolutionary-twitter-hacking.md) explains the final architecture.
 
 ---
 
@@ -20,37 +28,48 @@ It took Oyster Labs from $0 to $4M in revenue with $0 paid acquisition. The loop
 | Devices sold | 25,000+ |
 | Paid acquisition | **$0** |
 | Customer acquisition cost | **$0** |
-| Channels automated | 10 |
-| Posts / week | 250+ |
 | Humans in the loop | **0** |
 | Operating cost | ~$20 / month |
-
-No marketing team. No agency. No human scheduling posts. The content engine proposes, the verifier decides, the log remembers.
+| Median impressions / post | 180 → 4,100 (**+2,178%**) |
+| Continuous uptime | 14+ months |
 
 ---
 
 ## The loop
 
 ```
-┌────────────────────────────────────────────────────────────────┐
-│                                                                │
-│   HYPOTHESIZE ──▶ EXECUTE ──▶ MEASURE ──▶ VERIFY ──▶ DECIDE   │
-│        ▲                                              │         │
-│        │                                              │         │
-│        └──────────────── LOG ◀─────────────────────── ┘         │
-│                                                                 │
-└────────────────────────────────────────────────────────────────┘
+┌─────────────────────────── BASELINE SLOT ───────────────────────────┐
+│                                                                      │
+│     ┌──────────┐     ┌──────────┐     ┌──────────┐                  │
+│     │Prop.hook │     │Prop.thrd │     │Prop.time │   3 proposers    │
+│     │mutation  │     │mutation  │     │mutation  │   in parallel    │
+│     └────┬─────┘     └────┬─────┘     └────┬─────┘                  │
+│          └────────────────┼─────────────────┘                        │
+│                           ▼                                           │
+│                 ┌─────────────────────┐                              │
+│                 │ Twitter simulator   │   Prescreen. Cheap.          │
+│                 │ (offline, 0.1ms)    │   Keeps top 33%.             │
+│                 └──────────┬──────────┘                              │
+│                            ▼                                           │
+│                  ┌─────────────────────┐                             │
+│                  │ Ship to real X      │   48h measurement window     │
+│                  └──────────┬──────────┘                             │
+│                             ▼                                           │
+│                  ┌─────────────────────┐                             │
+│                  │ Mechanical verifier │   6 checks. No LLM.         │
+│                  └──────────┬──────────┘                             │
+│                             ▼                                           │
+│                   ┌─────────┴─────────┐                              │
+│                   ▼                   ▼                              │
+│              ┌────────┐          ┌─────────┐                         │
+│              │  KEEP  │          │ DISCARD │                         │
+│              │  merge │          │  log    │                         │
+│              │  log   │          │         │                         │
+│              └────────┘          └─────────┘                         │
+└──────────────────────────────────────────────────────────────────────┘
 ```
 
-1. **Hypothesize** — propose the next candidate post, chosen by a bandit over pattern families from the log's history
-2. **Execute** — ship it through the content engine to the appropriate account
-3. **Measure** — pull platform metrics 48 hours later
-4. **Verify** — mechanical checklist: not-duplicate, data-fresh, sample size, score ≥ threshold, statistical significance, tier-quota compliant
-5. **Decide** — kept / discarded / failed, with explicit reason
-6. **Log** — append to TSV with full provenance (git hash, iteration, score, lift, z-stat)
-7. **Repeat** — feed the log back into hypothesis generation
-
-**The verifier is the part most tools get wrong.** LLMs cannot be trusted to verify their own work. They skip steps, invent results, and favor "looks reasonable" over "mechanically true." Our verifier is short, deterministic Python with no LLM calls. It is the adult in the room.
+The loop never stops. Every iteration appends one row to an append-only TSV. The log is the training set and the audit trail.
 
 ---
 
@@ -58,90 +77,91 @@ No marketing team. No agency. No human scheduling posts. The content engine prop
 
 ```
 growth-os/
-├── AUTORESEARCH.md                  ← The protocol. The operating system.
-├── METRICS.md                       ← Internal metric catalog (DADR, NSR, PC2C ...)
+├── IMPLEMENTATION.md                 ← Deep dive for a16z (start here if reviewing)
+├── AUTORESEARCH.md                   ← The protocol — Karpathy's loop, adapted
+├── README.md                         ← This file
+├── METRICS.md                        ← Internal metric catalog
 │
-├── engine/
-│   ├── autoresearch_loop.py         ← Runnable loop
-│   ├── hypothesis_generator.py      ← Bandit + pattern proposer
-│   ├── verifier.py                  ← Mechanical checklist (~200 LOC, no LLMs)
-│   ├── results_log.py               ← Append-only TSV with atomic writes
-│   ├── signal_weights.py            ← Twitter weight map, re-derivable
-│   ├── content_engine.py            ← Multi-account scheduler
-│   └── ab_tester.py                 ← Thompson-sampling bandit + z-test
+├── engine/                           ← ~1,500 LOC total
+│   ├── evo_loop.py                   ← EvoHarness tree search (the main loop)
+│   ├── twitter_simulator.py          ← Offline weight-map oracle
+│   ├── slot.py                       ← Surface-decomposed slot primitive
+│   ├── verifier.py                   ← Mechanical checklist (no LLM calls)
+│   ├── results_log.py                ← Append-only TSV with provenance
+│   ├── autoresearch_loop.py          ← Linear autoresearch (reference impl.)
+│   ├── hypothesis_generator.py       ← Bandit over pattern families
+│   ├── signal_weights.py             ← Twitter weight map
+│   ├── content_engine.py             ← Multi-account scheduler
+│   └── ab_tester.py                  ← Thompson-sampling A/B harness
 │
-├── playbook/
-│   ├── 00-autoresearch-first.md     ← Read this before anything else
-│   ├── 01-read-the-source.md        ← 120-hour source-read protocol
-│   ├── 02-weight-mapping.md         ← Weight maps as data structures
-│   ├── 03-self-reply-pattern.md     ← +75× Twitter signal (the biggest single lever)
-│   ├── 04-dwell-optimization.md     ← Most durable positive signal
-│   ├── 05-negative-signal-avoidance.md  ← -148× and -738× (asymmetric penalties)
-│   ├── 06-author-diversity-decay.md ← Why 3 posts beats 10
-│   ├── 07-multi-account-orchestration.md ← Scaling horizontally
-│   └── 08-cross-platform-extension.md    ← LinkedIn / TikTok / Shopify / App Store
+├── playbook/                         ← 11 chapters, each ~400–800 lines
+│   ├── 00-autoresearch-first.md      ← Read before anything else
+│   ├── 01-read-the-source.md         ← How I read Twitter's 10,000 lines
+│   ├── 02-weight-mapping.md
+│   ├── 03-self-reply-pattern.md      ← The 75× lever — single biggest lever
+│   ├── 04-dwell-optimization.md
+│   ├── 05-negative-signal-avoidance.md  ← Asymmetric penalties (−148× / −738×)
+│   ├── 06-author-diversity-decay.md
+│   ├── 07-multi-account-orchestration.md
+│   ├── 08-cross-platform-extension.md
+│   ├── 09-internal-specs-as-appendix.md ← 17 internal engineering specs
+│   └── 10-evolutionary-twitter-hacking.md ← The final architecture
 │
 ├── case-studies/
-│   └── 00-zero-to-4m.md             ← Real numbers from Oyster Labs
+│   ├── 00-zero-to-4m.md              ← Real numbers from Oyster Labs
+│   ├── 01-v1-postmortem.md           ← 90 drafts, 0 published (the failure that produced the design)
+│   └── 02-competitor-teardown.md     ← Memories.ai / Rerun / π / General Intuition teardowns
 │
 ├── demos/
-│   └── signal-weight-explorer.html  ← Interactive — open in browser
+│   └── signal-weight-explorer.html   ← Interactive — open in browser
 │
 └── fellowship/
-    └── roadmap.md                   ← 8-week a16z Growth Engineer Fellowship plan
+    └── roadmap.md                    ← 8-week a16z Fellowship commitment
 ```
 
 ---
 
-## Try the loop in 60 seconds
+## 60-second test drive
 
 ```bash
 git clone https://github.com/howardleegeek/growth-os
 cd growth-os/engine
-python3 autoresearch_loop.py --iterations 20 --log /tmp/ar.tsv
+python3 evo_loop.py --iterations 20 --log /tmp/evo.tsv
 ```
 
-Output on a cold run:
+Output:
 
 ```
-[iter 000001] KEPT        score= +42.8  +107.5% vs ctl, n=5327, z=+4.61
-[iter 000002] discarded   score=  +3.0  failed: below_ship_threshold,lift_not_significant
-[iter 000003] discarded   score=  -0.8  failed: below_ship_threshold,lift_not_significant
-[iter 000004] KEPT        score= +11.6  +169.2% vs ctl, n=1633, z=+5.50
-[iter 000005] discarded   score=  +3.6  failed: below_ship_threshold,lift_not_significant
-[iter 000006] KEPT        score= +24.9  +266.0% vs ctl, n=4822, z=+9.04
+[iter 0005] active_branches=11  fragility={'hook': 0.10, 'thread': 0.20, 'timing': 0.36, 'safety': 0.90}
+[iter 0010] active_branches=21  fragility={'hook': 0.07, 'thread': 0.18, 'timing': 0.32, 'safety': 0.90}
+[iter 0015] active_branches=29  fragility={'hook': 0.05, 'thread': 0.15, 'timing': 0.29, 'safety': 0.90}
 ```
 
-Each line is one hypothesis tested against the mechanical verifier. `KEPT` means the candidate cleared all six checks. `discarded` tells you exactly which checks failed. The loop never stops.
+Every row is a slot mutation tested against the simulator, shipped (in this test, stubbed), measured, and mechanically verified. `safety` surface fragility stays near 0.9 because the loop correctly refuses to test mutations that could produce asymmetric negative signals.
 
 ---
 
 ## Core thesis
 
-> **Distribution is an optimization function. Optimization functions should be attacked by autonomous agents, not by humans with spreadsheets.**
+> **Twitter's ranker is a ranking function. Ranking functions should be attacked by evolutionary agents, not by humans with spreadsheets.**
 
-Every modern platform — Twitter, LinkedIn, TikTok, Shopify search, App Store — is a weighted scoring function. Read the weights, encode them, optimize against them with a loop that never sleeps. The only unknowns are platform-specific coefficients, which can be extracted from source (if open) or derived empirically (if closed).
+Every "growth tool" in 2026 has a human in the loop. Dashboards, A/B tests, creative reviews. Tuesday's instinct isn't Friday's instinct; even the best operators produce non-stationary quality.
 
-This works whether your distribution target is a social feed, a search rank, an app-store position, or a product-page impression. The engine is identical; only the adapters differ.
+`growth-os` replaces the human with an evolutionary loop that never sleeps, never drifts, and produces a complete audit trail. The system optimizes against the function the platform publishes. It compounds over months. It keeps its own log as training data for future iterations.
 
----
-
-## What this is NOT
-
-- Not a content calendar tool
-- Not a "better dashboard"
-- Not a generator that just writes posts with an LLM
-- Not a scheduler with no verification layer
-- Not a growth-hacking tactics library
-- Not a SaaS product with a monthly fee (it's MIT-licensed Python you run yourself)
-
-It is **distribution infrastructure** — the missing middle layer between an LLM and a platform API.
+The moat is operational, not technological. Every component uses ideas that already exist in public. The willingness to read the ranker's source, encode the weight map, enforce mechanical verification, and let a loop run for 14 months — that's the unusual part.
 
 ---
 
-## Why this hasn't been productized before
+## Why focused on Twitter
 
-Five reasons, explained in [`AUTORESEARCH.md`](./AUTORESEARCH.md#why-this-hasnt-been-productized-by-anyone-else). The short version: the moat is operational discipline, not technology. Reading the platform source, enforcing mechanical verification, and trusting a loop over intuition — all three are unnatural for most growth teams, which is exactly why the method has outsized payoff.
+Three reasons `growth-os` is Twitter-first, not cross-platform:
+
+1. **The source is public.** Twitter open-sourced their ranker in 2023. No other major platform has done this. The weight map is therefore more accurate here than anywhere else.
+2. **The weights are asymmetric.** +75× self-reply, −738× report. Asymmetric functions make the optimization meaningful — on platforms with symmetric weights, the gains are smaller.
+3. **The observation loop is fast.** 48 hours from ship to mature signal, vs. 7+ days on most other platforms. Faster iteration = faster learning.
+
+Adapters for other platforms (LinkedIn, Bluesky, TikTok) are in [`playbook/08-cross-platform-extension.md`](./playbook/08-cross-platform-extension.md), but Twitter is where the core of `growth-os` runs.
 
 ---
 
@@ -149,22 +169,23 @@ Five reasons, explained in [`AUTORESEARCH.md`](./AUTORESEARCH.md#why-this-hasnt-
 
 **Howard Jiacheng Li** — CEO & Growth Engineer @ Oysterworld INC
 
-- Bootstrapped Oyster Labs from $0 → $4M with zero paid acquisition
-- Previously co-founded [**MPCVault**](https://mpcvault.com) (digital asset custody, $5B AUM)
-- Run a 32-agent AI development factory that ships like a team of 50
+- Bootstrapped Oyster Labs from $0 → $4M with zero paid acquisition, zero capital raised
+- Previously co-founded [**MPCVault**](https://mpcvault.com) — digital asset custody, $5B AUM at peak
 - Wharton MBA, UC Berkeley Haas
-- Based in SF
+- SF-based, running a 32-agent AI development factory that ships like a team of 50
 
 [github.com/howardleegeek](https://github.com/howardleegeek) · [linkedin.com/in/connecthoward](https://www.linkedin.com/in/connecthoward/) · howard.linra@gmail.com
 
 ---
 
-## License
+## License & Contributing
 
-MIT. Take it, fork it, deploy it. If you ship something at scale, I want to hear about it.
+MIT. Take it, fork it, deploy it. If you ship something meaningful, I want to hear about it.
+
+Highest-value contributions right now: new platform weight maps (LinkedIn, TikTok, Shopify search), case studies with real numbers, and extensions to the evolutionary loop. See [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
 ---
 
-## Contributing
+## For a16z — the ask
 
-See [`CONTRIBUTING.md`](./CONTRIBUTING.md). Highest-value contributions right now: new platform weight maps (LinkedIn, TikTok, Shopify), new platform adapters, and case studies with real numbers.
+If you're evaluating for the Growth Engineer Fellowship: read [`IMPLEMENTATION.md`](./IMPLEMENTATION.md), then [`fellowship/roadmap.md`](./fellowship/roadmap.md). I'd like 30 minutes on a call. Agenda is in the implementation doc. Thanks for looking.

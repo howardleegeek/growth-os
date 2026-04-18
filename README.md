@@ -1,4 +1,22 @@
-# growth-os
+<div align="center">
+
+# `growth-os`
+
+### Evolutionary tree search that hacks Twitter's ranking algorithm
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
+[![No LLM in verifier](https://img.shields.io/badge/verifier-mechanical-green.svg)](./engine/verifier.py)
+[![Uptime](https://img.shields.io/badge/uptime-14%20months-brightgreen.svg)](./case-studies/00-zero-to-4m.md)
+[![Revenue generated](https://img.shields.io/badge/bootstrapped-%240%20%E2%86%92%20%244M-success.svg)](./case-studies/00-zero-to-4m.md)
+[![Paid acquisition](https://img.shields.io/badge/paid%20acquisition-%240-blue.svg)](./case-studies/00-zero-to-4m.md)
+[![Operating cost](https://img.shields.io/badge/running%20cost-~%2420%2Fmo-lightgrey.svg)](./IMPLEMENTATION.md)
+
+**[Implementation](./IMPLEMENTATION.md)** · **[Protocol](./AUTORESEARCH.md)** · **[Playbook](./playbook/)** · **[Case Studies](./case-studies/)** · **[Demo](./demos/signal-weight-explorer.html)**
+
+</div>
+
+---
 
 > **An evolutionary tree search that hacks Twitter's ranking algorithm. Forever.**
 

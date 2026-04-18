@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>growth-os · Signal Weight Explorer</title>
+<style>
+  :root {
+    --bg: #0b0d10;
+    --panel: #141820;
+    --ink: #e8ecf1;
+    --muted: #8a95a5;
+    --accent: #5ce1e6;
+    --good: #7af0a4;
+    --bad: #ff6670;
+    --line: #232933;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
+    font-family: "SF Mono", Menlo, Monaco, "Cascadia Mono", monospace;
+    font-size: 14px; line-height: 1.55; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 48px 24px 96px; }
+  header { margin-bottom: 48px; }
+  h1 { font-size: 28px; margin: 0 0 4px; letter-spacing: -0.02em; }
+  h1 .dot { color: var(--accent); }
+  .sub { color: var(--muted); font-size: 13px; }
+  .quote { margin: 32px 0 0; padding: 16px 20px; border-left: 2px solid var(--accent);
+    background: var(--panel); color: var(--ink); font-size: 15px; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 40px; }
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+    padding: 20px; }
+  .panel h2 { font-size: 14px; margin: 0 0 16px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.08em; }
+
+  .sliderRow { display: grid; grid-template-columns: 160px 1fr 72px; align-items: center;
+    gap: 12px; margin-bottom: 10px; }
+  .sliderRow .label { color: var(--ink); font-size: 13px; }
+  .sliderRow .weight { color: var(--muted); font-size: 12px; text-align: right; font-variant-numeric: tabular-nums; }
+  input[type=range] { width: 100%; accent-color: var(--accent); }
+
+  .score {
+    font-size: 56px; font-weight: 300; letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums; margin: 8px 0 4px;
+  }
+  .score.good { color: var(--good); }
+  .score.mid  { color: var(--accent); }
+  .score.bad  { color: var(--bad); }
+  .scoreLabel { color: var(--muted); font-size: 12px; }
+
+  .bar { position: relative; height: 10px; background: #1a1f29; border-radius: 5px; overflow: hidden; margin-top: 4px; }
+  .bar > .fillPos { position: absolute; top: 0; bottom: 0; left: 50%; background: var(--accent); }
+  .bar > .fillNeg { position: absolute; top: 0; bottom: 0; right: 50%; background: var(--bad); }
+
+  .breakdownRow { display: grid; grid-template-columns: 160px 1fr 72px; gap: 12px; align-items: center;
+    padding: 6px 0; border-bottom: 1px dashed var(--line); font-size: 12px; }
+  .breakdownRow:last-child { border-bottom: none; }
+  .breakdownRow .name { color: var(--muted); }
+  .breakdownRow .contrib { text-align: right; font-variant-numeric: tabular-nums; }
+
+  .note { margin-top: 20px; color: var(--muted); font-size: 12px; line-height: 1.7; }
+  .note code { background: #1a1f29; padding: 1px 6px; border-radius: 4px; color: var(--ink); }
+
+  footer { margin-top: 72px; padding-top: 24px; border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 12px; display: flex; justify-content: space-between; }
+  a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1><span class="dot">◉</span> Signal Weight Explorer</h1>
+    <div class="sub">Interactive model of Twitter's open-source ranking function · part of <a href="../README.md">growth-os</a></div>
+    <div class="quote">
+      Every platform has an objective function. Most founders guess at it.
+      This tool lets you play with the one Twitter published in 2023 — and
+      see how a single self-reply can outweigh a viral retweet.
+    </div>
+  </header>
+
+  <div class="grid">
+
+    <div class="panel">
+      <h2>Projected Signal Probabilities</h2>
+      <div class="sliderRow">
+        <span class="label">Self-reply &lt;3min</span>
+        <input type="range" min="0" max="100" value="95" data-key="selfReply">
+        <span class="weight">&times; 75</span>
+      </div>
+      <div class="sliderRow">
+        <span class="label">Being replied to</span>
+        <input type="range" min="0" max="100" value="35" data-key="repliedTo">
+        <span class="weight">&times; 27</span>
+      </div>
+      <div class="sliderRow">
+        <span class="label">Profile click</span>
+        <input type="range" min="0" max="100" value="15" data-key="profileClick">
+        <span class="weight">&times; 24</span>
+      </div>
+      <div class="sliderRow">
+        <span class="label">Deep dwell &gt;2min</span>
+        <input type="range" min="0" max="100" value="45" data-key="dwell">
+        <span class="weight">&times; 20</span>
+      </div>
+      <div class="sliderRow">
+        <span class="label">Retweet</span>
+        <input type="range" min="0" max="100" value="5" data-key="retweet">
+        <span class="weight">&times; 2</span>
+      </div>
+      <div class="sliderRow">
+        <span class="label">Like</span>
+        <input type="range" min="0" max="100" value="60" data-key="like">
+        <span class="weight">&times; 1</span>
+      </div>
+      <div class="sliderRow">
+        <span class="label">Negative feedback</span>
+        <input type="range" min="0" max="100" value="1" data-key="negative">
+        <span class="weight">&times; -148</span>
+      </div>
+      <div class="sliderRow">
+        <span class="label">Report</span>
+        <input type="range" min="0" max="100" value="0" data-key="report">
+        <span class="weight">&times; -738</span>
+      </div>
+
+      <div class="note">
+        Sliders are % probability the signal fires for this post. The score is the
+        weighted sum under Twitter's published coefficients. Drag
+        <code>Self-reply</code> to zero and watch a top-scoring post collapse — that
+        single pattern is the largest lever in the system.
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Distribution Score</h2>
+      <div id="score" class="score good">&mdash;</div>
+      <div class="scoreLabel" id="verdict">Above ship threshold</div>
+
+      <h2 style="margin-top:32px">Contribution Breakdown</h2>
+      <div id="breakdown"></div>
+    </div>
+
+  </div>
+
+  <footer>
+    <span>&copy; Howard Li &middot; growth-os</span>
+    <span>Source: <a href="https://github.com/twitter/the-algorithm">twitter/the-algorithm</a></span>
+  </footer>
+</div>
+
+<script>
+  const WEIGHTS = {
+    selfReply:    { w:   75, label: "Self-reply <3min" },
+    repliedTo:    { w:   27, label: "Being replied to" },
+    profileClick: { w:   24, label: "Profile click" },
+    dwell:        { w:   20, label: "Deep dwell >2min" },
+    retweet:      { w:    2, label: "Retweet" },
+    like:         { w:    1, label: "Like" },
+    negative:     { w: -148, label: "Negative feedback" },
+    report:       { w: -738, label: "Report" },
+  };
+  const SHIP_THRESHOLD = 5.0;
+
+  const scoreEl     = document.getElementById("score");
+  const verdictEl   = document.getElementById("verdict");
+  const breakdownEl = document.getElementById("breakdown");
+
+  function renderRow(contrib, maxAbs) {
+    const row = document.createElement("div");
+    row.className = "breakdownRow";
+
+    const name = document.createElement("span");
+    name.className = "name";
+    name.textContent = contrib.label;
+
+    const bar = document.createElement("div");
+    bar.className = "bar";
+    const fill = document.createElement("span");
+    const pct = Math.abs(contrib.c) / maxAbs * 50;
+    if (contrib.c >= 0) {
+      fill.className = "fillPos";
+      fill.style.width = pct + "%";
+    } else {
+      fill.className = "fillNeg";
+      fill.style.width = pct + "%";
+    }
+    bar.appendChild(fill);
+
+    const val = document.createElement("span");
+    val.className = "contrib";
+    val.textContent = (contrib.c >= 0 ? "+" : "") + contrib.c.toFixed(2);
+
+    row.appendChild(name);
+    row.appendChild(bar);
+    row.appendChild(val);
+    return row;
+  }
+
+  function compute() {
+    const vals = {};
+    document.querySelectorAll("input[type=range]").forEach(el => {
+      vals[el.dataset.key] = (+el.value) / 100;
+    });
+
+    const contribs = Object.entries(WEIGHTS).map(([k, { w, label }]) => ({
+      key: k, label, w, p: vals[k], c: w * vals[k]
+    }));
+
+    const total = contribs.reduce((s, x) => s + x.c, 0);
+
+    scoreEl.textContent = total.toFixed(2);
+    scoreEl.className = "score " + (total >= 15 ? "good" : total >= SHIP_THRESHOLD ? "mid" : "bad");
+    verdictEl.textContent = total >= SHIP_THRESHOLD
+      ? "Ships · " + (total / SHIP_THRESHOLD).toFixed(1) + "\u00d7 threshold"
+      : "Below ship threshold — killed by gate()";
+
+    contribs.sort((a, b) => Math.abs(b.c) - Math.abs(a.c));
+    const maxAbs = Math.max.apply(null, contribs.map(c => Math.abs(c.c))) || 1;
+
+    while (breakdownEl.firstChild) breakdownEl.removeChild(breakdownEl.firstChild);
+    contribs.forEach(c => breakdownEl.appendChild(renderRow(c, maxAbs)));
+  }
+
+  document.querySelectorAll("input[type=range]").forEach(el => el.addEventListener("input", compute));
+  compute();
+</script>
+</body>
+</html>

@@ -10,7 +10,7 @@
 [![Stdlib-only core](https://img.shields.io/badge/core-stdlib--only-blue.svg)](./engine/)
 [![Status](https://img.shields.io/badge/status-active-brightgreen.svg)](https://github.com/howardleegeek/growth-os/commits/main)
 
-**[Implementation](./IMPLEMENTATION.md)** · **[Protocol](./AUTORESEARCH.md)** · **[Playbook](./playbook/)** · **[Case Studies](./case-studies/)** · **[Demo](./demos/signal-weight-explorer.html)** · **[Runtime](./clawmarketing/)**
+**[The Journey](./THE_JOURNEY.md)** · **[Implementation](./IMPLEMENTATION.md)** · **[Protocol](./AUTORESEARCH.md)** · **[Playbook](./playbook/)** · **[Case Studies](./case-studies/)** · **[Demo](./demos/signal-weight-explorer.html)** · **[Runtime](./clawmarketing/)**
 
 </div>
 
@@ -29,7 +29,11 @@ The system combines four ideas that haven't been combined before:
 3. **Offline Twitter simulator** — the published weight map as a scoring function, used to run thousands of mutation trials per second at zero API cost
 4. **Grok opponent study** — the AlphaGo supervised-learning phase, applied to distribution: Grok mines the playbooks of master accounts (including their deleted tweets and live engagement) and seeds the evo loop with Bayesian priors from real-world top operators
 
-The system was developed at Oyster Labs as part of a bootstrapped go-to-market. It's open-sourced here for anyone running into the same problem space.
+The system is **Growth 2.0** — what became possible for us once vibe coding matured and Twitter's algorithm changed in late 2025.
+
+**Growth 1.0** (pre-December 2025) was how we actually bootstrapped Oyster Labs: exclusive-membership tied to device purchase, device gifting to unlock adjacent audiences, co-branded limited editions, RT-and-comment engagement (while it still worked), a hero narrative, and months of manual reverse-engineering of the old Twitter algorithm. Human-driven, labor-intensive, effective.
+
+When the algorithm changed and vibe coding made autonomous systems practical, I built `growth-os` to encode those lessons into an evolutionary loop that runs autonomously. **It's still being perfected.** Full history in [`THE_JOURNEY.md`](./THE_JOURNEY.md).
 
 **If you're reading this from a16z:** [`IMPLEMENTATION.md`](./IMPLEMENTATION.md) is the deep dive written specifically for you. Start there.
 
